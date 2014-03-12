@@ -1,3 +1,15 @@
 [submodule "deps/luajit-2.0"]
 	path = deps/luajit-2.0
 	url = http://luajit.org/git/luajit-2.0.git
+[submodule "deps/luasocket"]
+	path = deps/luasocket
+	url = https://github.com/diegonehab/luasocket.git
+[submodule "deps/coxpcall"]
+	path = deps/coxpcall
+	url = https://github.com/keplerproject/coxpcall.git
+[submodule "deps/copas"]
+	path = deps/copas
+	url = https://github.com/keplerproject/copas.git
+[submodule "deps/concurrentlua"]
+	path = deps/concurrentlua
+	url = https://github.com/lefcha/concurrentlua.git
