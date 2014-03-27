@@ -13,3 +13,6 @@
 [submodule "deps/concurrentlua"]
 	path = deps/concurrentlua
 	url = https://github.com/lefcha/concurrentlua.git
+[submodule "deps/libuv"]
+	path = deps/libuv
+	url = https://github.com/joyent/libuv.git
