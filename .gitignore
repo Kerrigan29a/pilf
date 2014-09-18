@@ -12,3 +12,6 @@
 .DS_Store
 *.sublime-*
 *.dSYM/
+venv/
+build/
+src/*_decl.h

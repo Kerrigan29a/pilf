@@ -61,7 +61,8 @@ extern "C" {{
 #endif /* {guard} */
 '''.format(guard=guard)
 
-    pattern = re.compile("(^\s*" + pattern + ".+?){", re.DOTALL | re.MULTILINE)
+    # pattern = re.compile("(^\s*" + pattern + ".+?){", re.DOTALL | re.MULTILINE)
+    pattern = re.compile("(^\s*" + pattern + "[^;]+?){", re.DOTALL | re.MULTILINE)
 
     result = [comment]
 
