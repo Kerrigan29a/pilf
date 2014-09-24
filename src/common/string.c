@@ -22,15 +22,17 @@
 
 
 
+#include <string.h>
+
 #include "platform.h"
 #include "declarations.h"
 
-
+#ifdef __DGREP__
 #pragma dgrep start_verbatim_block
-#ifdef PILF_DARWIN
 #include <string.h>
-#else
+#ifndef PILF_DARWIN
 #pragma dgrep stop_verbatim_block
+#endif /* __DGREP__ */
 
 
 
@@ -105,6 +107,9 @@ PILF_PUBLIC size_t strlcpy(char *dst, const char *src, size_t siz)
 }
 
 
+
+#ifdef __DGREP__
 #pragma dgrep start_verbatim_block
 #endif
 #pragma dgrep stop_verbatim_block
+#endif /* __DGREP__ */
