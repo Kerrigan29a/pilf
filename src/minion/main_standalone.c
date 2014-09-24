@@ -1,5 +1,4 @@
 #include <string.h>
-#include <limits.h>
 #include <libgen.h>
 #include <signal.h>
 
@@ -8,6 +7,8 @@
 #include "../common/check.h"
 
 minion_context_t ctx;
+
+#define PATH_MAX 4096
 
 void stop_dispatcher(int signal)
 {
@@ -26,11 +27,6 @@ void stop_dispatcher(int signal)
         abort();
 }
     ctx.terminate = true;
-}
-
-void print_info(int signal)
-{
-    printf("INFO\n");
 }
 
 int main(int argc, char const *argv[])
@@ -61,7 +57,6 @@ int main(int argc, char const *argv[])
     signal(SIGINT,  stop_dispatcher);
     signal(SIGKILL, stop_dispatcher);
     signal(SIGTERM, stop_dispatcher);
-    signal(SIGINFO, print_info);
 
     minion_start(&ctx);
     minion_stop(&ctx);

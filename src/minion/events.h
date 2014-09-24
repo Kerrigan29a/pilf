@@ -77,7 +77,6 @@ typedef struct _listener {
 
 #define EVENTS_BIND_NEW_LISTENER(T, ctx, event_type, handler) do { \
     minion_listener_t *l; \
-    ASSERT_NNULL(handler); \
     l = (minion_listener_t *) minion_secure_malloc(ctx, \
         sizeof(minion_listener_t)); \
     CHECK_NNULL_R(l, __LINE__); \

@@ -14,31 +14,33 @@ import re
 import time
 import hashlib
 
-__VERSION__ = "0.2"
+__VERSION__ = "0.3"
 
 
 
 def filter_lines(pattern, filename):
     with open(filename) as f:
-        return (" ".join(l.strip() for l in g.splitlines() if l)
-            for m in pattern.finditer(f.read()) for g in m.groups() if g)
+        return (g for m in pattern.finditer(f.read()) for g in m.groups() if g)
 
 
 
-    
 def parse(pattern, ifilenames, ofilename=None, include_guard=True):
 
     datetime = time.strftime("%d/%m/%Y %H:%M:%S", time.gmtime())
 
     comment = '''/*
  * {datetime}
- * Version: {version}
+ * {progname} version: {version}
  *
  * DO NOT EDIT!!!
  * This file was created automatically by:
  *
  * {spell}
- */'''.format(spell=" ".join(sys.argv), datetime=datetime, version=__VERSION__)
+ */'''.format(
+    spell=" ".join(sys.argv),
+    datetime=datetime,
+    progname=os.path.splitext(os.path.basename(__file__))[0],
+    version=__VERSION__)
 
     header = '''
 #ifdef __cplusplus
@@ -75,9 +77,12 @@ extern "C" {{
 '''.format(guard=guard)
 
     # Compose pattern
+    progname = os.path.splitext(os.path.basename(__file__))[0]
     patterns = [
         "(^\s*" + pattern + "[^;]+?){", 
-        "^\s*#\s*pragma\s+dec_ext\s+start_verbatim_block\s+(.*?)\s+^\s*#\s*pragma\s+dec_ext\s+stop_verbatim_block"
+        "^\s*#\s*pragma\s+" + progname
+            + "\s+start_verbatim_block\s+(.*?)\s+^\s*#\s*pragma\s+"
+            + progname + "\s+stop_verbatim_block"
     ]
 
     global_pattern = "(?:" + ")|(?:".join(patterns) + ")"
@@ -100,6 +105,7 @@ extern "C" {{
             result.append("/* " + filename + " */")        
         
         for l in hits:
+            l = l.strip()
             if l.startswith(pattern):
                 l += ";"
             result.append(l)

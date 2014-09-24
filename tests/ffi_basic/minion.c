@@ -43,11 +43,6 @@ void stop_dispatcher(int signal)
     ctx.terminate = true;
 }
 
-void print_info(int signal)
-{
-    printf("INFO\n");
-}
-
 static void run(void **state)
 {
     FILE *f;
@@ -63,7 +58,6 @@ static void run(void **state)
     signal(SIGINT,  stop_dispatcher);
     signal(SIGKILL, stop_dispatcher);
     signal(SIGTERM, stop_dispatcher);
-    signal(SIGINFO, print_info);
     
     minion_start(&ctx);
     minion_stop(&ctx);

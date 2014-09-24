@@ -8,6 +8,6 @@
 
 #include "context.h"
 #include "public_decl.h"
-
+#include "../common/common.h"
 
 #endif /* __PILF_MINION__MINION_H__ */

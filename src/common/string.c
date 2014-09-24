@@ -22,16 +22,18 @@
 
 
 
-#include <sys/types.h>
-#include <string.h>
-
 #include "platform.h"
 #include "declarations.h"
 
 
-#pragma dec_ext start_verbatim_block
-#if !defined(PILF_DARWIN)
-#pragma dec_ext stop_verbatim_block
+#pragma dgrep start_verbatim_block
+#ifdef PILF_DARWIN
+#include <string.h>
+#else
+#pragma dgrep stop_verbatim_block
+
+
+
 /*
  * Appends src to string dst of size siz (unlike strncat, siz is the full size
  * of dst, not space left). At most siz-1 characters will be copied. Always
@@ -101,6 +103,8 @@ PILF_PUBLIC size_t strlcpy(char *dst, const char *src, size_t siz)
 
     return(s - src - 1);    /* count does not include NUL */
 }
-#pragma dec_ext start_verbatim_block
+
+
+#pragma dgrep start_verbatim_block
 #endif
-#pragma dec_ext stop_verbatim_block
+#pragma dgrep stop_verbatim_block

@@ -10,7 +10,7 @@ include ../Makefile.vars
 include ../deps/Makefile.vars
 include Makefile.vars
 
-DECL_EXTRACTOR = python $(PILF_BASE_DIR)/tools/declarations.py
+DGREP = python $(PILF_BASE_DIR)/tools/dgrep.py
 
 
 
@@ -32,6 +32,7 @@ deploy: $(VIRTUAL_ENV) $(COMMON_BUILD_DIR) $(MINION_BUILD_DIR) $(MINION_STATIC_T
 clean:
 	-rm $(MINION_STATIC_TARGET) $(MINION_STATIC_OBJS)
 	-rm $(MINION_PUBLIC_DECL_SRC) $(MINION_INTERNAL_DECL_SRC) $(MINION_PRIVATE_DECL_SRC)
+	-rm $(COMMON_PUBLIC_DECL_SRC) $(COMMON_INTERNAL_DECL_SRC) $(COMMON_PRIVATE_DECL_SRC)
 	-rm $(MINION_SHARED_TARGET) $(MINION_SHARED_OBJS)
 	-rm $(MINION_EXE_TARGET) $(MINION_EXE_OBJS)
 
@@ -45,13 +46,13 @@ distclean:
 ###
 
 $(COMMON_PUBLIC_DECL_SRC): $(addprefix $(COMMON_SRC_DIR)/, $(COMMON_SRCS))
-	$(DECL_EXTRACTOR) $^ -p PILF_PUBLIC -o $@
+	$(DGREP) $^ -p PILF_PUBLIC -o $@
 
 $(COMMON_INTERNAL_DECL_SRC): $(addprefix $(COMMON_SRC_DIR)/, $(COMMON_SRCS))
-	$(DECL_EXTRACTOR) $^ -p PILF_INTERNAL -o $@
+	$(DGREP) $^ -p PILF_INTERNAL -o $@
 
 $(COMMON_PRIVATE_DECL_SRC): $(addprefix $(COMMON_SRC_DIR)/, $(COMMON_SRCS))
-	$(DECL_EXTRACTOR) $^ -p PILF_PRIVATE -o $@
+	$(DGREP) $^ -p PILF_PRIVATE -o $@
 
 
 
@@ -72,13 +73,13 @@ $(MINION_BUILD_DIR):
 	mkdir -p $@
 
 $(MINION_PUBLIC_DECL_SRC): $(addprefix $(MINION_SRC_DIR)/, $(MINION_STATIC_SRCS))
-	$(DECL_EXTRACTOR) $^ -p PILF_PUBLIC -o $@
+	$(DGREP) $^ -p PILF_PUBLIC -o $@
 
 $(MINION_INTERNAL_DECL_SRC): $(addprefix $(MINION_SRC_DIR)/, $(MINION_STATIC_SRCS))
-	$(DECL_EXTRACTOR) $^ -p PILF_INTERNAL -o $@
+	$(DGREP) $^ -p PILF_INTERNAL -o $@
 
 $(MINION_PRIVATE_DECL_SRC): $(addprefix $(MINION_SRC_DIR)/, $(MINION_STATIC_SRCS))
-	$(DECL_EXTRACTOR) $^ -p PILF_PRIVATE -o $@
+	$(DGREP) $^ -p PILF_PRIVATE -o $@
 
 ################################################################################
 # Other targets
@@ -86,7 +87,6 @@ $(MINION_PRIVATE_DECL_SRC): $(addprefix $(MINION_SRC_DIR)/, $(MINION_STATIC_SRCS
 
 $(VIRTUAL_ENV):
 	mkdir -p $@
-
 
 $(COMMON_BUILD_DIR):
 	mkdir -p $@
