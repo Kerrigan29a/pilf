@@ -13,7 +13,7 @@ include Makefile.vars
 # Main targets
 ###
 
-.PHONY: all test check clean distclean
+.PHONY: all test check clean distclean update
 
 all:
 	$(MAKE) $(MAKEFLAGS) -C $(DEPS_DIR)
@@ -35,3 +35,6 @@ distclean:
 	$(MAKE) $(MAKEFLAGS) -C $(TESTS_DIR) $@
 	-rm -r $(VIRTUAL_ENV)
 	-rm -r $(BUILD_DIR)
+
+update:
+	git submodule foreach git pull origin master

@@ -13,19 +13,32 @@ import sys
 import re
 import time
 import hashlib
+
+__VERSION__ = "0.2"
+
+
+
+def filter_lines(pattern, filename):
+    with open(filename) as f:
+        return (" ".join(l.strip() for l in g.splitlines() if l)
+            for m in pattern.finditer(f.read()) for g in m.groups() if g)
+
+
+
     
-def extract_declarations(pattern, ifilenames, ofilename=None, include_guard=True):
+def parse(pattern, ifilenames, ofilename=None, include_guard=True):
 
     datetime = time.strftime("%d/%m/%Y %H:%M:%S", time.gmtime())
 
     comment = '''/*
  * {datetime}
+ * Version: {version}
  *
  * DO NOT EDIT!!!
  * This file was created automatically by:
  *
  * {spell}
- */'''.format(spell=" ".join(sys.argv), datetime=datetime)
+ */'''.format(spell=" ".join(sys.argv), datetime=datetime, version=__VERSION__)
 
     header = '''
 #ifdef __cplusplus
@@ -61,8 +74,14 @@ extern "C" {{
 #endif /* {guard} */
 '''.format(guard=guard)
 
-    # pattern = re.compile("(^\s*" + pattern + ".+?){", re.DOTALL | re.MULTILINE)
-    pattern = re.compile("(^\s*" + pattern + "[^;]+?){", re.DOTALL | re.MULTILINE)
+    # Compose pattern
+    patterns = [
+        "(^\s*" + pattern + "[^;]+?){", 
+        "^\s*#\s*pragma\s+dec_ext\s+start_verbatim_block\s+(.*?)\s+^\s*#\s*pragma\s+dec_ext\s+stop_verbatim_block"
+    ]
+
+    global_pattern = "(?:" + ")|(?:".join(patterns) + ")"
+    compiled_pattern = re.compile(global_pattern, re.DOTALL | re.MULTILINE)
 
     result = [comment]
 
@@ -73,15 +92,17 @@ extern "C" {{
 
     for filename in ifilenames:
 
-        # Find declarations
-        with open(filename) as f:
-            declarations = [" ".join([l.strip() for l in m.group(1).split('\n') if l]) + ";"
-                    for m in pattern.finditer(f.read())]
+        hits = list(filter_lines(compiled_pattern, filename))
 
-        if declarations:
+
+        if hits:
             filename = filename[len(commonprefix):] if ofilename else filename
-            result.append("/* " + filename + " */")
-            result += declarations
+            result.append("/* " + filename + " */")        
+        
+        for l in hits:
+            if l.startswith(pattern):
+                l += ";"
+            result.append(l)
 
     result.append(footer)
 
@@ -109,7 +130,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     try:        
-        txt = extract_declarations(args.pattern, args.files, args.output)
+        txt = parse(args.pattern, args.files, args.output)
         if args.output:
             with open(args.output, "w") as fout:
                 fout.write(txt)

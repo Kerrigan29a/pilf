@@ -22,6 +22,13 @@ DECL_EXTRACTOR = python $(PILF_BASE_DIR)/tools/declarations.py
 
 all: deploy
 
+deploy: $(VIRTUAL_ENV) $(COMMON_BUILD_DIR) $(MINION_BUILD_DIR) $(MINION_STATIC_TARGET) $(MINION_EXE_TARGET) $(MINION_SHARED_TARGET)
+	install -m 755 $(MINION_EXE_TARGET) $(BIN_DIR)
+	install -m 644 $(MINION_SHARED_TARGET) $(LIB_DIR)
+	install -m 644 $(MINION_STATIC_TARGET) $(LIB_DIR)
+	install -d -m 755 $(ETC_DIR)
+	install -m 644 $(MINION_SRC_DIR)/boot.lua $(MINION_ETC_DIR)
+
 clean:
 	-rm $(MINION_STATIC_TARGET) $(MINION_STATIC_OBJS)
 	-rm $(MINION_PUBLIC_DECL_SRC) $(MINION_INTERNAL_DECL_SRC) $(MINION_PRIVATE_DECL_SRC)
@@ -37,12 +44,14 @@ distclean:
 # Common targets
 ###
 
-deploy: $(VIRTUAL_ENV) $(MINION_BUILD_DIR) $(MINION_STATIC_TARGET) $(MINION_EXE_TARGET) $(MINION_SHARED_TARGET)
-	install -m 755 $(MINION_EXE_TARGET) $(BIN_DIR)
-	install -m 644 $(MINION_SHARED_TARGET) $(LIB_DIR)
-	install -m 644 $(MINION_STATIC_TARGET) $(LIB_DIR)
-	install -d -m 755 $(ETC_DIR)
-	install -m 644 $(MINION_SRC_DIR)/boot.lua $(MINION_ETC_DIR)
+$(COMMON_PUBLIC_DECL_SRC): $(addprefix $(COMMON_SRC_DIR)/, $(COMMON_SRCS))
+	$(DECL_EXTRACTOR) $^ -p PILF_PUBLIC -o $@
+
+$(COMMON_INTERNAL_DECL_SRC): $(addprefix $(COMMON_SRC_DIR)/, $(COMMON_SRCS))
+	$(DECL_EXTRACTOR) $^ -p PILF_INTERNAL -o $@
+
+$(COMMON_PRIVATE_DECL_SRC): $(addprefix $(COMMON_SRC_DIR)/, $(COMMON_SRCS))
+	$(DECL_EXTRACTOR) $^ -p PILF_PRIVATE -o $@
 
 
 
@@ -51,18 +60,15 @@ deploy: $(VIRTUAL_ENV) $(MINION_BUILD_DIR) $(MINION_STATIC_TARGET) $(MINION_EXE_
 ###
 
 $(MINION_EXE_TARGET): $(MINION_EXE_DEPS)
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(MINION_EXE_LDFLAGS) -o $@ $^
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(MINION_EXE_LDFLAGS) $(filter-out %.h, $^) -o $@
 
 $(MINION_SHARED_TARGET):$(MINION_SHARED_DEPS)
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(MINION_SHARED_LDFLAGS) -o $@ $^
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(MINION_SHARED_LDFLAGS) $(filter-out %.h, $^) -o $@
 
 $(MINION_STATIC_TARGET):$(MINION_STATIC_DEPS)
 	$(AR) crv $@ $(MINION_STATIC_OBJS)
 
 $(MINION_BUILD_DIR):
-	mkdir -p $@
-
-$(VIRTUAL_ENV):
 	mkdir -p $@
 
 $(MINION_PUBLIC_DECL_SRC): $(addprefix $(MINION_SRC_DIR)/, $(MINION_STATIC_SRCS))
@@ -74,5 +80,16 @@ $(MINION_INTERNAL_DECL_SRC): $(addprefix $(MINION_SRC_DIR)/, $(MINION_STATIC_SRC
 $(MINION_PRIVATE_DECL_SRC): $(addprefix $(MINION_SRC_DIR)/, $(MINION_STATIC_SRCS))
 	$(DECL_EXTRACTOR) $^ -p PILF_PRIVATE -o $@
 
-$(MINION_BUILD_DIR)%.o: $(MINION_SRC_DIR)%.c
+################################################################################
+# Other targets
+###
+
+$(VIRTUAL_ENV):
+	mkdir -p $@
+
+
+$(COMMON_BUILD_DIR):
+	mkdir -p $@
+
+$(BUILD_DIR)%.o: $(SRC_DIR)%.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@

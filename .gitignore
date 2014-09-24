@@ -14,4 +14,4 @@
 *.dSYM/
 venv/
 build/
-src/*_decl.h
+src/*/*_decl.h
