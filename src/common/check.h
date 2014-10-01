@@ -10,8 +10,10 @@
 /*******************************************************************************
  * Utils
  ***/
-#define TOSTR(e) _TOSTR(e)
-#define _TOSTR(e)  #e
+#ifndef TOSTR
+  #define TOSTR(e) _TOSTR(e)
+  #define _TOSTR(e)  #e
+#endif
 
 #define IS_NULL(p)          ((p) == NULL)
 #define IS_NNULL(p)         ((p) != NULL)

@@ -25,14 +25,14 @@ test:
 check: test
 
 clean:
-	$(MAKE) $(MAKEFLAGS) -C $(DEPS_DIR) $@
-	$(MAKE) $(MAKEFLAGS) -C $(SRC_DIR) $@
-	$(MAKE) $(MAKEFLAGS) -C $(TESTS_DIR) $@
+	$(MAKE) $(MAKEFLAGS) -C $(SRC_DIR) clean
+	$(MAKE) $(MAKEFLAGS) -C $(TESTS_DIR) clean
 
 distclean:
-	$(MAKE) $(MAKEFLAGS) -C $(DEPS_DIR) $@
-	$(MAKE) $(MAKEFLAGS) -C $(SRC_DIR) $@
-	$(MAKE) $(MAKEFLAGS) -C $(TESTS_DIR) $@
+	$(MAKE) $(MAKEFLAGS) -C $(DEPS_DIR) clean
+	$(MAKE) $(MAKEFLAGS) -C $(DEPS_DIR) distclean
+	$(MAKE) $(MAKEFLAGS) -C $(SRC_DIR) distclean
+	$(MAKE) $(MAKEFLAGS) -C $(TESTS_DIR) distclean
 	-rm -r $(VIRTUAL_ENV)
 	-rm -r $(BUILD_DIR)
 

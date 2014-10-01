@@ -50,6 +50,7 @@
 #if defined ( PILF_WINDOWS )
 #define __func__ __FUNCTION__ /* http://stackoverflow.com/a/2282433 */
 #define inline __inline
+#define _Pragma __pragma
 #endif
 
 #endif /* __PILF_COMMON__PLATFORM_H__ */

@@ -27,14 +27,13 @@
 #include "platform.h"
 #include "declarations.h"
 
-#ifdef __DGREP__
-#pragma dgrep start_verbatim_block
-#include <string.h>
 #ifndef PILF_DARWIN
-#pragma dgrep stop_verbatim_block
+
+#ifdef __DGREP__
+    #pragma dgrep verbatim "#include <string.h>"
+#    pragma dgrep verbatim "#include \"platform.h\""
+#pragma dgrep verbatim "#ifndef PILF_DARWIN"
 #endif /* __DGREP__ */
-
-
 
 /*
  * Appends src to string dst of size siz (unlike strncat, siz is the full size
@@ -106,10 +105,8 @@ PILF_PUBLIC size_t strlcpy(char *dst, const char *src, size_t siz)
     return(s - src - 1);    /* count does not include NUL */
 }
 
-
-
 #ifdef __DGREP__
-#pragma dgrep start_verbatim_block
-#endif
-#pragma dgrep stop_verbatim_block
+#pragma dgrep verbatim "#endif"
 #endif /* __DGREP__ */
+
+#endif /* PILF_DARWIN */
