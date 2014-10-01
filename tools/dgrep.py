@@ -18,14 +18,18 @@ import subprocess
 import textwrap
 import codecs
 
-__VERSION__ = "2.0"
+__VERSION__ = "2.1"
 
 
 
 def debug(*objs):
-    pass
-    # print("\x1b[34m(D)\x1b[0m", *objs, file=sys.stderr)
+    # pass
+    print("\x1b[34m(D)\x1b[0m", *objs, file=sys.stderr)
 
+
+
+class PreprocessorError(Exception):
+    pass
 
 
 class Preprocessor(object):
@@ -108,6 +112,8 @@ class Preprocessor(object):
         p = subprocess.Popen(full_spell, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = p.communicate()
         p.wait()
+        if stderr:
+            raise PreprocessorError(stderr)
         return stdout, stderr
 
 
@@ -365,11 +371,17 @@ if __name__ == "__main__":
         print("  " + unicode(parser._declaration_pattern.pattern))
         exit(0)
 
-    if script_args.output:
-        with open(script_args.output, "w") as f:
+    try:
+        if script_args.output:
+            with open(script_args.output, "w") as f:
+                for line in composer.run():
+                    f.write(line + "\n")
+        else:
             for line in composer.run():
-                f.write(line + "\n")
-    else:
-        for line in composer.run():
-            print(line)
-
+                print(line)
+    except PreprocessorError as e:
+        print("#" * 80, file=sys.stderr)
+        print("# Preprocessor Error", file=sys.stderr)
+        print("###")
+        print(e.message, file=sys.stderr)
+        exit(1)

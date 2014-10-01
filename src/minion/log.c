@@ -5,7 +5,7 @@
 
 #if defined(__GNUC__) || defined(__clang__) || defined(__llvm__)
 /* support printf format checking (3=the format string, 4=start of varargs) */
-PILF_INTERNAL void log_log(minion_context_t * const ctx, const char * const preffix,
+void log_log(minion_context_t * const ctx, const char * const preffix,
     const char * format, ...) __attribute__ (( format( printf, 3, 4) ));
 #endif
 

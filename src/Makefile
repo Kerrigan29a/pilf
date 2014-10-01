@@ -46,13 +46,13 @@ distclean:
 ###
 
 $(COMMON_PUBLIC_DECL_SRC): $(addprefix $(COMMON_SRC_DIR)/, $(COMMON_SRCS))
-	$(DGREP) -p PILF_PUBLIC -o $@ -s="$(CPPFLAGS)" $^
+	$(DGREP) -p PILF_PUBLIC -o $@ -s="$(CPPFLAGS) $(filter -I%, $(CFLAGS))" $^
 
 $(COMMON_INTERNAL_DECL_SRC): $(addprefix $(COMMON_SRC_DIR)/, $(COMMON_SRCS))
-	$(DGREP) -p PILF_INTERNAL -o $@ -s="$(CPPFLAGS)" $^
+	$(DGREP) -p PILF_INTERNAL -o $@ -s="$(CPPFLAGS) $(filter -I%, $(CFLAGS))" $^
 
 $(COMMON_PRIVATE_DECL_SRC): $(addprefix $(COMMON_SRC_DIR)/, $(COMMON_SRCS))
-	$(DGREP) -p PILF_PRIVATE -o $@ -s="$(CPPFLAGS)" $^
+	$(DGREP) -p PILF_PRIVATE -o $@ -s="$(CPPFLAGS) $(filter -I%, $(CFLAGS))" $^
 
 
 
@@ -73,13 +73,13 @@ $(MINION_BUILD_DIR):
 	mkdir -p $@
 
 $(MINION_PUBLIC_DECL_SRC): $(addprefix $(MINION_SRC_DIR)/, $(MINION_STATIC_SRCS))
-	$(DGREP) -p PILF_PUBLIC -o $@ -s="$(CPPFLAGS)" $^
+	$(DGREP) -p PILF_PUBLIC -o $@ -s="$(CPPFLAGS) $(filter -I%, $(CFLAGS))" $^
 
 $(MINION_INTERNAL_DECL_SRC): $(addprefix $(MINION_SRC_DIR)/, $(MINION_STATIC_SRCS))
-	$(DGREP) -p PILF_INTERNAL -o $@ -s="$(CPPFLAGS)" $^
+	$(DGREP) -p PILF_INTERNAL -o $@ -s="$(CPPFLAGS) $(filter -I%, $(CFLAGS))" $^
 
 $(MINION_PRIVATE_DECL_SRC): $(addprefix $(MINION_SRC_DIR)/, $(MINION_STATIC_SRCS))
-	$(DGREP) -p PILF_PRIVATE -o $@ -s="$(CPPFLAGS)" $^
+	$(DGREP) -p PILF_PRIVATE -o $@ -s="$(CPPFLAGS) $(filter -I%, $(CFLAGS))" $^
 
 ################################################################################
 # Other targets
