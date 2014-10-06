@@ -23,8 +23,8 @@ __VERSION__ = "2.1"
 
 
 def debug(*objs):
-    # pass
-    print("\x1b[34m(D)\x1b[0m", *objs, file=sys.stderr)
+    pass
+    #print("\x1b[34m(D)\x1b[0m", *objs, file=sys.stderr)
 
 
 

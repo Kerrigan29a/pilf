@@ -61,13 +61,13 @@ $(COMMON_PRIVATE_DECL_SRC): $(addprefix $(COMMON_SRC_DIR)/, $(COMMON_SRCS))
 ###
 
 $(MINION_EXE_TARGET): $(MINION_EXE_DEPS)
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(MINION_EXE_LDFLAGS) $(filter-out %.h, $^) -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(filter-out %.h, $^) $(MINION_EXE_LDFLAGS) -o $@
 
 $(MINION_SHARED_TARGET):$(MINION_SHARED_DEPS)
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(MINION_SHARED_LDFLAGS) $(filter-out %.h, $^) -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(filter-out %.h, $^) $(MINION_SHARED_LDFLAGS) -o $@
 
 $(MINION_STATIC_TARGET):$(MINION_STATIC_DEPS)
-	$(AR) crv $@ $(MINION_STATIC_OBJS)
+	$(AR) crs $@ $(MINION_STATIC_OBJS)
 
 $(MINION_BUILD_DIR):
 	mkdir -p $@
