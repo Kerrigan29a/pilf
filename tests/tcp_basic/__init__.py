@@ -22,15 +22,19 @@ def run_test():
 
     # Execute master
     log("Executing master")
-    master_proc = subprocess.Popen([normalized_path(__file__, NANOCAT_BIN),
+    spell = [normalized_path(__file__, NANOCAT_BIN),
         "--req",
         "--bind", MASTER_URL,
         "--data", LUA_CODE,
-    ])
+    ]
+    log("spell = " + " ".join(spell))
+    master_proc = subprocess.Popen(spell)
 
     # Execute minion
     log("Executing minion")
-    minion_proc = subprocess.Popen([normalized_path(__file__, "./minion"), MASTER_URL],
+    spell = [normalized_path(__file__, "./minion"), MASTER_URL]
+    log("spell = " + " ".join(spell))
+    minion_proc = subprocess.Popen(spell,
         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     master_proc.wait()
     log("Terminating minion")

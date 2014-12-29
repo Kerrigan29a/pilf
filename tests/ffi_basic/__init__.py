@@ -34,8 +34,9 @@ ADDRESS_FILE = "address.txt"
 def run_test():
     # Exec minion
     log("Executing minion")
-    log(normalized_path(__file__, "./minion"))
-    minion_proc = subprocess.Popen([normalized_path(__file__, "./minion"), MASTER_URL],
+    spell = [normalized_path(__file__, "./minion"), MASTER_URL]
+    log("spell = " + " ".join(spell))
+    minion_proc = subprocess.Popen(spell,
         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     # Get address of hidden_func
@@ -52,12 +53,14 @@ def run_test():
             time.sleep(1)
 
     # Exec fake master with code
-    log("Executing master with:\n" + LUA_CODE.format(address=address))
-    master_proc = subprocess.Popen([normalized_path(__file__, NANOCAT_BIN),
+    log("Executing master")
+    spell = [normalized_path(__file__, NANOCAT_BIN),
         "--req",
         "--bind", MASTER_URL,
         "--data", LUA_CODE.format(address=address),
-    ])
+    ]
+    log("spell = " + " ".join(spell))
+    master_proc = subprocess.Popen(spell)
     master_proc.wait()
 
     # Get lines from minion

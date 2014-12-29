@@ -20,6 +20,6 @@ void _start()
 }
 
 void _stop()
-{    
+{
     minion_stop(&ctx);
 }
