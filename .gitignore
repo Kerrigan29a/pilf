@@ -1,3 +1,4 @@
+# C related files
 *.[oa]
 *.so
 *.obj
@@ -5,6 +6,11 @@
 *.exp
 *.dll
 *.exe
+
+# Python related files
+*.py[cod]
+*.egg-info
+
 *.manifest
 *.dmp
 *.swp
