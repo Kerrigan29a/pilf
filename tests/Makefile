@@ -29,7 +29,8 @@ all: build_complex_tests
 clean:
 	-rm -rf $(SIMPLE_TESTS_TARGETS)
 	-rm -rf *.dSYM
-	-rm -rf *.xml
+	-rm -f *.xml
+	-rm -f *.pyc
 	-for F in $(COMPLEX_TEST); do $(MAKE) $(MAKEFLAGS) -C $(TESTS_DIR)/$$F $@; done
 
 

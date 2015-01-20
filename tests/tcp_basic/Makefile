@@ -23,7 +23,8 @@ minion: minion.c $(TEST_DEPS)
 	$(CC) $(CPPFLAGS) $(TEST_CFLAGS) $(TEST_LDFLAGS) $^ -o $@
 
 clean:
-	-rm -rf minion
+	-rm -f minion
 	-rm -rf *.dSYM
+	-rm -f *.pyc
 
 distclean: clean
