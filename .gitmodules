@@ -9,3 +9,6 @@
 [submodule "deps/uthash"]
 	path = deps/uthash
 	url = https://github.com/troydhanson/uthash.git
+[submodule "deps/lua"]
+	path = deps/lua
+	url = https://github.com/Kerrigan29a/lua.git
