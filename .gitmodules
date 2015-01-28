@@ -1,15 +1,11 @@
-[submodule "deps/luajit-2.0"]
-	path = deps/luajit-2.0
-	url = http://luajit.org/git/luajit-2.0.git
-    ignore = dirty
 [submodule "deps/cmockery2"]
 	path = deps/cmockery2
 	url = https://github.com/lpabon/cmockery2.git
-    ignore = dirty
+	ignore = dirty
 [submodule "deps/nanomsg"]
 	path = deps/nanomsg
 	url = https://github.com/nanomsg/nanomsg.git
-    ignore = dirty
+	ignore = dirty
 [submodule "deps/uthash"]
 	path = deps/uthash
 	url = https://github.com/troydhanson/uthash.git
