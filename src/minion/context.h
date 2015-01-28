@@ -11,7 +11,7 @@
 #include "../common/check.h"
 
 #ifdef __PILF_MINION__MINION_INTERNALS_H__
-#include <lua.h>
+#include <luajit-2.0/lua.h>
 
 #include "events.h"
 #include "link.h"
