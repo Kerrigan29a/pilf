@@ -221,6 +221,8 @@ target_link_libraries(minion_standalone
         ${VIRTUAL_ENV}/lib/liblua.a
         ${VIRTUAL_ENV}/lib/libnanomsg.a
         )
+target_link_libraries(minion_standalone m)
+
 
 install (TARGETS minion_standalone RUNTIME DESTINATION ${VIRTUAL_ENV}/bin)
 install (TARGETS minion LIBRARY DESTINATION ${VIRTUAL_ENV}/lib)
