@@ -214,6 +214,7 @@ target_link_libraries(minion
         ${VIRTUAL_ENV}/lib/libnanomsg.a
         )
 target_link_libraries(minion m)
+target_link_libraries(minion dl)
 
 add_executable(minion_standalone ${MINION_EXE_SOURCES} $<TARGET_OBJECTS:minion_obj>)
 target_link_libraries(minion_standalone
@@ -222,6 +223,7 @@ target_link_libraries(minion_standalone
         ${VIRTUAL_ENV}/lib/libnanomsg.a
         )
 target_link_libraries(minion_standalone m)
+target_link_libraries(minion_standalone dl)
 
 
 install (TARGETS minion_standalone RUNTIME DESTINATION ${VIRTUAL_ENV}/bin)
