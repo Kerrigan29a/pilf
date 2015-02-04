@@ -96,7 +96,7 @@ else ()
 endif ()
 # if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
 #     set(LUA_MAKE_OPTIONS ${LUA_MAKE_OPTIONS} MYCFLAGS+=-g)
-endif ()
+# endif ()
 
 ExternalProject_Add( lua
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/lua
@@ -117,7 +117,7 @@ set(NANOMSG_CONFIGURE_OPTIONS ${NANOMSG_CONFIGURE_OPTIONS} --with-pic)
 #set(NANOMSG_CONFIGURE_OPTIONS ${NANOMSG_CONFIGURE_OPTIONS} --disable-nanocat)
 # if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
 #     set(NANOMSG_CONFIGURE_OPTIONS ${NANOMSG_CONFIGURE_OPTIONS} --enable-debug)
-endif ()
+# endif ()
 
 ExternalProject_Add( nanomsg
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/nanomsg
