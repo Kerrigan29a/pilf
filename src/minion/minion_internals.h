@@ -6,6 +6,11 @@
  * Includes
  ***/
 
+/* Define log functions to use in ../common/check.h */
+#define LOG_ERROR(...)      error(ctx, __VA_ARGS__)
+#define LOG_CRITICAL(...)   critical(ctx, __VA_ARGS__)
+
+
 #include "../common/common_internals.h"
 #include "minion_config.h"
 #include "context.h"

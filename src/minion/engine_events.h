@@ -9,8 +9,8 @@
  ***/
 
 typedef enum _engine_event_type {
-    MINION_ENGINE_DONE_EVENT =  MINION_ENGINE_EVENT | 0x1,
-    MINION_ENGINE_EXEC_EVENT =  MINION_ENGINE_EVENT | 0x2,
+    MINION_ENGINE_EXEC_EVENT =  MINION_ENGINE_EVENT | 0x1,
+    MINION_ENGINE_DONE_EVENT =  MINION_ENGINE_EVENT | 0x2,
 } minion_engine_event_type_e;
 
 typedef struct _engine_event {

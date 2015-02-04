@@ -31,7 +31,7 @@
 
 #ifdef __DGREP__
     #pragma dgrep verbatim "#include <string.h>"
-#    pragma dgrep verbatim "#include \"platform.h\""
+    #pragma dgrep verbatim "#include \"platform.h\""
 #pragma dgrep verbatim "#ifndef PILF_DARWIN"
 #endif /* __DGREP__ */
 
@@ -106,7 +106,7 @@ PILF_PUBLIC size_t strlcpy(char *dst, const char *src, size_t siz)
 }
 
 #ifdef __DGREP__
-#pragma dgrep verbatim "#endif"
+    #pragma dgrep verbatim "#endif"
 #endif /* __DGREP__ */
 
 #endif /* PILF_DARWIN */

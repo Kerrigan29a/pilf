@@ -9,6 +9,7 @@
 #include "platform.h"
 #include "declarations.h"
 #include "check.h"
+#include "console_colors.h"
 
 #ifndef __DGREP__
     #include "public_decl.h"

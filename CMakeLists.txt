@@ -33,9 +33,14 @@ set (COMMON_STATIC_CODES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/common/string.c
     )
 
+set (EXTERNAL_COMMON_STATIC_CODES
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/common/console_colors.c
+    )
+
 set (MINION_STATIC_SOURCES
     ${MINION_STATIC_CODES}
     ${COMMON_STATIC_CODES}
+    ${EXTERNAL_COMMON_STATIC_CODES}
     ${MINION_INTERNAL_DECL}
     ${MINION_PRIVATE_DECL}
     ${MINION_PUBLIC_DECL}
@@ -63,9 +68,9 @@ set(VIRTUAL_ENV ${CMAKE_CURRENT_SOURCE_DIR}/venv)
 
 set(CMOCKERY2_CONFIGURE_OPTIONS --prefix=${VIRTUAL_ENV})
 set(CMOCKERY2_CONFIGURE_OPTIONS ${CMOCKERY2_CONFIGURE_OPTIONS} --with-pic)
-if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
-    set(CMOCKERY2_CONFIGURE_OPTIONS ${CMOCKERY2_CONFIGURE_OPTIONS} --enable-gcov)
-endif ()
+#if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
+#    set(CMOCKERY2_CONFIGURE_OPTIONS ${CMOCKERY2_CONFIGURE_OPTIONS} --enable-gcov)
+#endif ()
 
 ExternalProject_Add( cmockery2
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/cmockery2
@@ -107,7 +112,7 @@ ExternalProject_Add( lua
 set(NANOMSG_CONFIGURE_OPTIONS --prefix=${VIRTUAL_ENV})
 set(NANOMSG_CONFIGURE_OPTIONS ${NANOMSG_CONFIGURE_OPTIONS} --with-pic)
 #set(NANOMSG_CONFIGURE_OPTIONS ${NANOMSG_CONFIGURE_OPTIONS} --enable-doc)
-set(NANOMSG_CONFIGURE_OPTIONS ${NANOMSG_CONFIGURE_OPTIONS} --disable-shared)
+#set(NANOMSG_CONFIGURE_OPTIONS ${NANOMSG_CONFIGURE_OPTIONS} --disable-shared)
 #set(NANOMSG_CONFIGURE_OPTIONS ${NANOMSG_CONFIGURE_OPTIONS} --disable-symlinks)
 #set(NANOMSG_CONFIGURE_OPTIONS ${NANOMSG_CONFIGURE_OPTIONS} --disable-nanocat)
 if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
@@ -203,7 +208,18 @@ add_custom_command (
 
 include_directories(${VIRTUAL_ENV}/include)
 
-add_library (minion_obj OBJECT ${MINION_STATIC_SOURCES})
+add_compile_options(-Wall -Werror)
+add_compile_options(-Wno-unknown-pragmas -Wno-address)
+if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+    add_compile_options(-g)
+    add_compile_options(-O0)
+    add_definitions(-DDEBUG -DUNIT_TESTING)
+elseif(${CMAKE_BUILD_TYPE} MATCHES "Release")
+    add_definitions(-DNDEBUG)
+endif()
+
+
+add_library(minion_obj OBJECT ${MINION_STATIC_SOURCES})
 set_property(TARGET minion_obj PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 add_library (minion SHARED ${MINION_SHARED_SOURCES} $<TARGET_OBJECTS:minion_obj>)
@@ -213,8 +229,12 @@ target_link_libraries(minion
         ${VIRTUAL_ENV}/lib/liblua.a
         ${VIRTUAL_ENV}/lib/libnanomsg.a
         )
-target_link_libraries(minion m)
-target_link_libraries(minion dl)
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  target_link_libraries(minion m)
+  target_link_libraries(minion dl)
+  target_link_libraries(minion phtread)
+  target_link_libraries(minion anl)
+endif ()
 
 add_executable(minion_standalone ${MINION_EXE_SOURCES} $<TARGET_OBJECTS:minion_obj>)
 target_link_libraries(minion_standalone
@@ -222,8 +242,12 @@ target_link_libraries(minion_standalone
         ${VIRTUAL_ENV}/lib/liblua.a
         ${VIRTUAL_ENV}/lib/libnanomsg.a
         )
-target_link_libraries(minion_standalone m)
-target_link_libraries(minion_standalone dl)
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  target_link_libraries(minion_standalone m)
+  target_link_libraries(minion_standalone dl)
+  target_link_libraries(minion_standalone phtread)
+  target_link_libraries(minion_standalone anl)
+endif ()
 
 
 install (TARGETS minion_standalone RUNTIME DESTINATION ${VIRTUAL_ENV}/bin)
