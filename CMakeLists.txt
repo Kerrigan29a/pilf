@@ -232,7 +232,7 @@ target_link_libraries(minion
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   target_link_libraries(minion m)
   target_link_libraries(minion dl)
-  target_link_libraries(minion phtread)
+  target_link_libraries(minion pthread)
   target_link_libraries(minion anl)
 endif ()
 
@@ -245,7 +245,7 @@ target_link_libraries(minion_standalone
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   target_link_libraries(minion_standalone m)
   target_link_libraries(minion_standalone dl)
-  target_link_libraries(minion_standalone phtread)
+  target_link_libraries(minion_standalone pthread)
   target_link_libraries(minion_standalone anl)
 endif ()
 
