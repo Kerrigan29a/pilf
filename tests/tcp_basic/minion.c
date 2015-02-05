@@ -14,7 +14,8 @@
 #include <setjmp.h>
 #include <cmockery/cmockery.h>
 
-#define BOOT_FILE_NAME   "boot.lua"
+#define TEST_NAME       "tcp_basic"
+#define BOOT_FILE_NAME  "boot.lua"
 
 const char  * exec_name;
 const char  * master_url;
@@ -42,14 +43,19 @@ void stop_dispatcher(int signal)
 
 static void run(void **state)
 {
-    char absolute_path[PATH_MAX];
+    char boot_script_path[PATH_MAX];
 
-    assert_true(strlcpy(absolute_path, dirname((char *) exec_name), sizeof(absolute_path)) < sizeof(absolute_path));
-    assert_true(strlcat(absolute_path, "/", sizeof(absolute_path)) < sizeof(absolute_path));
-    assert_true(strlcat(absolute_path, BOOT_FILE_NAME, sizeof(absolute_path)) < sizeof(absolute_path));
+    assert_string_equal(pilf_getcwd(boot_script_path, sizeof(boot_script_path)), boot_script_path);
+#ifdef PILF_WINDOWS
+    #define SEPARATOR "\\"
+#else
+    #define SEPARATOR "/"
+#endif
+    assert_true(strlcat(boot_script_path, SEPARATOR, sizeof(boot_script_path)) < sizeof(boot_script_path));
+    assert_true(strlcat(boot_script_path, BOOT_FILE_NAME, sizeof(boot_script_path)) < sizeof(boot_script_path));
 
     minion_context_init(&ctx);
-    ctx.file_name =     absolute_path;
+    ctx.file_name =     boot_script_path;
     ctx.script =        NULL;
     ctx.master_url =    (char *) master_url;
 
@@ -75,5 +81,5 @@ int main(int argc, char **argv) {
     exec_name = argv[0];
     master_url = argv[1];
 
-    return run_tests(tests, "tcp_basic");
+    return run_tests(tests, TEST_NAME);
 }

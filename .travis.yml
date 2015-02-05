@@ -7,4 +7,4 @@ os:
   - osx
 sudo: false
 script:
-    - mkdir build && cd build && cmake ..
+    - mkdir build && cd build && cmake .. && make && make install && ctest
