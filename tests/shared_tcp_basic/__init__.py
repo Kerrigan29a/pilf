@@ -7,11 +7,12 @@
 from __future__ import print_function
 
 import subprocess
+import os
+import shlex
 try:
     from test_utils import *
 except ImportError:
     import sys
-    import os.path
     parent_dir = os.path.join(os.path.dirname(__file__), "..")
     sys.path.append(parent_dir)
     from test_utils import *
@@ -39,19 +40,22 @@ def run_test(spell, lib):
 
     # Execute target spell
     log("Executing target spell")
+    log("spell = " + spell)
 
+
+    env = os.environ
     if sys.platform == "darwin":
-        target_spell = ["DYLD_INSERT_LIBRARIES=" + lib, spell]
+        env["DYLD_INSERT_LIBRARIES"] = lib
+        spell = shlex.split(spell)
     elif sys.platform == "win32":
         raise AssertionError("Can't handle Windows at the momment")
     else:
-        target_spell = ["LD_PRELOAD=" + lib, spell]
+        env["LD_PRELOAD"] = lib
+        spell = shlex.split(spell)
 
-    target_spell = " ".join(target_spell)
-    log("spell = " + target_spell)
-    target_proc = subprocess.Popen(target_spell,
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-        shell=True)
+    target_proc = subprocess.Popen(spell,
+        env=env,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     master_proc.wait()
     log("Terminating target spell")
     target_proc.terminate()
