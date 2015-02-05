@@ -6,13 +6,13 @@ os:
   - linux
   - osx
 
-# Docker version
+# Container-based infrastructure
 sudo: false
 addons:
   apt_packages:
   - cmake
 
-# Old version
+# Normal infrastructure
 # before_install:
 #     - sudo apt-get install cmake
 

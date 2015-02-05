@@ -276,6 +276,12 @@ macro (add_pilf_test NAME)
       ${VIRTUAL_ENV}/lib/liblua.a
       ${VIRTUAL_ENV}/lib/libnanomsg.a
       )
+    if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+      target_link_libraries(${NAME} m)
+      target_link_libraries(${NAME} dl)
+      target_link_libraries(${NAME} pthread)
+      target_link_libraries(${NAME} anl)
+    endif ()
     add_test (NAME ${NAME}
               COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/tests/${NAME} 
                 --exe $<TARGET_FILE:${NAME}>
