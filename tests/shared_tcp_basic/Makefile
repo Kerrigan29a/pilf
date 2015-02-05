@@ -19,7 +19,7 @@ include ../Makefile.vars
 
 all: minion
 
-minion: test_standalone.c $(TEST_DEPS)
+minion: test_shared.c $(TEST_DEPS)
 	$(CC) $(CPPFLAGS) $(TEST_CFLAGS) $(TEST_LDFLAGS) $^ -o $@
 
 clean:

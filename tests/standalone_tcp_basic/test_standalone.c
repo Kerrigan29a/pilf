@@ -58,6 +58,7 @@ static void run(void **state)
     ctx.file_name =     boot_script_path;
     ctx.script =        NULL;
     ctx.master_url =    (char *) master_url;
+    ctx.log_prefix =    TEST_NAME;
 
     signal(SIGINT,  stop_dispatcher);
     signal(SIGKILL, stop_dispatcher);

@@ -20,5 +20,5 @@ except ImportError:
     from test_utils import *
 
 if __name__ == "__main__":
-    args = parse_test_standalone_args(current_dir)
+    args = parse_test_shared_args(current_dir)
     exit(run_test(**vars(args)))

@@ -266,10 +266,11 @@ install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/minion/boot.lua DESTINATION ${VIR
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/minion)
 set (all_tests "")
 
-macro (add_pilf_test NAME)
+
+
+macro (add_minion_test_standalone NAME)
     list (APPEND all_tests ${NAME})
-    add_executable (${NAME} tests/${NAME}/minion.c $<TARGET_OBJECTS:minion_obj>)
-    set_target_properties(${NAME} PROPERTIES OUTPUT_NAME ${NAME}_minion)
+    add_executable (${NAME} tests/${NAME}/test_standalone.c $<TARGET_OBJECTS:minion_obj>)
     target_link_libraries (${NAME}
       ${VIRTUAL_ENV}/lib/libcmockery.a
       ${VIRTUAL_ENV}/lib/libcmockery.a
@@ -287,7 +288,32 @@ macro (add_pilf_test NAME)
                 --exe $<TARGET_FILE:${NAME}>
                 --cwd ${CMAKE_CURRENT_SOURCE_DIR}/tests/${NAME}
     )
-endmacro (add_pilf_test)
+endmacro (add_minion_test_standalone)
+
+
+
+macro (add_minion_test_shared NAME)
+    list (APPEND all_tests ${NAME})
+    add_library (${NAME} SHARED tests/${NAME}/test_shared.c $<TARGET_OBJECTS:minion_obj>)
+    target_link_libraries (${NAME}
+      ${VIRTUAL_ENV}/lib/libcmockery.a
+      ${VIRTUAL_ENV}/lib/libcmockery.a
+      ${VIRTUAL_ENV}/lib/liblua.a
+      ${VIRTUAL_ENV}/lib/libnanomsg.a
+      )
+    if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+      target_link_libraries(${NAME} m)
+      target_link_libraries(${NAME} dl)
+      target_link_libraries(${NAME} pthread)
+      target_link_libraries(${NAME} anl)
+    endif ()
+    add_test (NAME ${NAME}
+              COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/tests/${NAME} 
+                --lib $<TARGET_FILE:${NAME}>
+    )
+endmacro (add_minion_test_shared)
+
 
 #  Transport tests.
-add_pilf_test (standalone_tcp_basic)
+add_minion_test_standalone(standalone_tcp_basic)
+add_minion_test_shared(shared_tcp_basic)
