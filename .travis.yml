@@ -5,6 +5,12 @@ compiler:
 os:
   - linux
   - osx
+
+# Docker
 sudo: false
+addons:
+  apt_packages:
+  - cmake
+
 script:
     - mkdir build && cd build && cmake .. && make && make install && ctest
