@@ -14,7 +14,7 @@
 #include <setjmp.h>
 #include <cmockery/cmockery.h>
 
-#define TEST_NAME       "tcp_basic"
+#define TEST_NAME       "standalone_tcp_basic"
 #define BOOT_FILE_NAME  "boot.lua"
 
 const char  * exec_name;

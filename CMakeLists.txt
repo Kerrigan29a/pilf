@@ -290,4 +290,4 @@ macro (add_pilf_test NAME)
 endmacro (add_pilf_test)
 
 #  Transport tests.
-add_pilf_test (tcp_basic)
+add_pilf_test (standalone_tcp_basic)
