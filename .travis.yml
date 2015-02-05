@@ -6,11 +6,15 @@ os:
   - linux
   - osx
 
-# Docker
-sudo: false
-addons:
-  apt_packages:
-  - cmake
+# Docker version
+# sudo: false
+# addons:
+#   apt_packages:
+#   - cmake
+
+# Old version
+before_install:
+    - sudo apt-get install cmake
 
 script:
     - mkdir build && cd build && cmake .. && make && make install && ctest
