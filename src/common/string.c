@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Javier Escalada Gómez
+ * Copyright (c) 2014-2015 Javier Escalada Gómez
  *
  * Unashamedly ripped from OpenBSD's libkern
  */

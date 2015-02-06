@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Javier Escalada Gómez
+# Copyright (c) 2014-2015 Javier Escalada Gómez
 # All rights reserved.
 
 cmake_minimum_required (VERSION 2.8)
