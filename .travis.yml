@@ -5,5 +5,16 @@ compiler:
 os:
   - linux
   - osx
+
+# Container-based infrastructure
+sudo: false
+addons:
+  apt_packages:
+  - cmake
+
+# Normal infrastructure
+# before_install:
+#     - sudo apt-get install cmake
+
 script:
-    - make && make check
+    - mkdir build && cd build && cmake .. && make && make install && ctest

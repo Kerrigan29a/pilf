@@ -60,4 +60,6 @@ int main(int argc, char const *argv[])
 
     minion_start(&ctx);
     minion_stop(&ctx);
+
+    return 0;
 }

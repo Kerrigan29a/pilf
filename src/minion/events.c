@@ -152,7 +152,7 @@ PILF_INTERNAL int events_dispatch(minion_context_t * const ctx)
             }
         }
 
-        minion_sleep(ctx->step_time);
+        pilf_sleep(ctx->step_time);
     }
 
     return 0;

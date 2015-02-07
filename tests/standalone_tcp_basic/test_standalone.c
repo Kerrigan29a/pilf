@@ -14,14 +14,12 @@
 #include <setjmp.h>
 #include <cmockery/cmockery.h>
 
+#define TEST_NAME       "standalone_tcp_basic"
+#define BOOT_FILE_NAME  "boot.lua"
+
 const char  * exec_name;
 const char  * master_url;
 minion_context_t ctx;
-
-void hidden_func()
-{
-    printf("hi from hidden func\n");
-}
 
 void stop_dispatcher(int signal)
 {
@@ -45,15 +43,22 @@ void stop_dispatcher(int signal)
 
 static void run(void **state)
 {
-    FILE *f;
+    char boot_script_path[PATH_MAX];
+
+    assert_string_equal(pilf_getcwd(boot_script_path, sizeof(boot_script_path)), boot_script_path);
+#ifdef PILF_WINDOWS
+    #define SEPARATOR "\\"
+#else
+    #define SEPARATOR "/"
+#endif
+    assert_true(strlcat(boot_script_path, SEPARATOR, sizeof(boot_script_path)) < sizeof(boot_script_path));
+    assert_true(strlcat(boot_script_path, BOOT_FILE_NAME, sizeof(boot_script_path)) < sizeof(boot_script_path));
 
     minion_context_init(&ctx);
+    ctx.file_name =     boot_script_path;
+    ctx.script =        NULL;
     ctx.master_url =    (char *) master_url;
-
-    f = fopen("address.txt", "w");
-    assert_true(f != NULL);
-    fprintf(f, "%p\n", hidden_func);
-    fclose(f);
+    ctx.log_prefix =    TEST_NAME;
 
     signal(SIGINT,  stop_dispatcher);
     signal(SIGKILL, stop_dispatcher);
@@ -61,8 +66,6 @@ static void run(void **state)
     
     minion_start(&ctx);
     minion_stop(&ctx);
-
-    remove("address.txt");
 }
 
 int main(int argc, char **argv) {
@@ -79,5 +82,5 @@ int main(int argc, char **argv) {
     exec_name = argv[0];
     master_url = argv[1];
 
-    return run_tests(tests, "ffi_basic");
+    return run_tests(tests, TEST_NAME);
 }

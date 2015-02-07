@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Javier Escalada Gómez
+# Copyright (c) 2014-2015 Javier Escalada Gómez
 # All rights reserved.
 
 MAKEFILE_FILE = $(abspath $(firstword $(MAKEFILE_LIST)))

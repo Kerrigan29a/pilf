@@ -11,6 +11,9 @@
 *.py[cod]
 *.egg-info
 
+# Test related files
+tests/*/*.xml
+
 *.manifest
 *.dmp
 *.swp
@@ -21,4 +24,3 @@
 venv/
 build/
 src/*/*_decl.h
-tests/*.xml

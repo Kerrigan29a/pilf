@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Javier Escalada Gómez
+# Copyright (c) 2014-2015 Javier Escalada Gómez
 # All rights reserved.
 
 MAKEFILE_FILE = $(abspath $(firstword $(MAKEFILE_LIST)))
@@ -19,7 +19,7 @@ include ../Makefile.vars
 
 all: minion
 
-minion: minion.c $(TEST_DEPS)
+minion: test_standalone.c $(TEST_DEPS)
 	$(CC) $(CPPFLAGS) $(TEST_CFLAGS) $(TEST_LDFLAGS) $^ -o $@
 
 clean:
