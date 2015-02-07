@@ -22,10 +22,16 @@ minion_context_t ctx;
 static void run(void **state)
 {
     minion_context_init(&ctx);
+
+    assert_null(ctx.file_name);
+    assert_null(ctx.script);
+    assert_null(ctx.master_url);
+    assert_null(ctx.log_prefix);
+    assert_int_equal(stderr, ctx.log_file);
+
     ctx.master_url =    (char *) MINION_MASTER_URL;
-    ctx.log_prefix =    TEST_NAME;
-    
-    minion_start(&ctx);
+
+    assert_int_equal(0, minion_start(&ctx));
 }
 
 void __attribute__ ((constructor)) _start(void);

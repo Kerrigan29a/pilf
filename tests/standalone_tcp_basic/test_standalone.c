@@ -55,16 +55,21 @@ static void run(void **state)
     assert_true(strlcat(boot_script_path, BOOT_FILE_NAME, sizeof(boot_script_path)) < sizeof(boot_script_path));
 
     minion_context_init(&ctx);
-    ctx.file_name =     boot_script_path;
-    ctx.script =        NULL;
-    ctx.master_url =    (char *) master_url;
-    ctx.log_prefix =    TEST_NAME;
 
-    signal(SIGINT,  stop_dispatcher);
-    signal(SIGKILL, stop_dispatcher);
-    signal(SIGTERM, stop_dispatcher);
-    
-    minion_start(&ctx);
+    assert_null(ctx.file_name);
+    assert_null(ctx.script);
+    assert_null(ctx.master_url);
+    assert_null(ctx.log_prefix);
+    assert_int_equal(stderr, ctx.log_file);
+
+    ctx.file_name =     boot_script_path;
+    ctx.master_url =    (char *) master_url;
+
+    assert_int_not_equal(SIG_ERR, signal(SIGINT,  stop_dispatcher));
+    assert_int_not_equal(SIG_ERR, signal(SIGKILL, stop_dispatcher));
+    assert_int_not_equal(SIG_ERR, signal(SIGTERM, stop_dispatcher));
+
+    assert_int_equal(0, minion_start(&ctx));
     minion_stop(&ctx);
 }
 

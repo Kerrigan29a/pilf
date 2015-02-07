@@ -28,22 +28,23 @@ def run_test(exe=None, cwd=None):
     exe = exe or normalized_path(__file__, name + "_minion")
 
     # Execute master
-    log("Executing master")
+    log("Executing master:")
     spell = [normalized_path(__file__, NANOCAT_BIN),
         "--req",
         "--bind", MASTER_URL,
         "--data", LUA_CODE,
     ]
-    log("spell = " + " ".join(spell))
+    log("    spell = " + " ".join(spell))
     master_proc = subprocess.Popen(spell)
 
     # Execute minion
-    log("Executing minion")
+    log("Executing minion:")
     spell = [exe, MASTER_URL]
-    log("spell = " + " ".join(spell))
-    log("cwd = " + str(cwd))
+    log("    spell = " + " ".join(spell))
+    log("    cwd = " + str(cwd))
     minion_proc = subprocess.Popen(spell,
-        cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        cwd=cwd,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     master_proc.wait()
     log("Terminating minion")
     minion_proc.terminate()
@@ -54,14 +55,14 @@ def run_test(exe=None, cwd=None):
     hit_config_file = False
     print("")
     for line in stderr_data.splitlines():
-        log(line, name + " - stderr")
+        log(line, "tested - stderr")
     print("")
     for line in stdout_data.splitlines():
         if line == "hi from master":
             hit_master = True
         if line == "hi from config file":
             hit_config_file = True
-        log(line, name + " - stdout")
+        log(line, "tested - stdout")
 
     return 0 if hit_master and hit_config_file and master_proc.returncode == 0 else 1
     return master_proc.returncode

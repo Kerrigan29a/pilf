@@ -21,7 +21,7 @@ NANOCAT_BIN = "../../venv/bin/nanocat"
 MASTER_URL = "tcp://127.0.0.1:12345"
 LUA_CODE = 'print("hi from master")'
 
-def run_test(spell, lib):
+def run_test(spell, lib, cwd=None):
     assert spell
     assert lib
 
@@ -29,18 +29,19 @@ def run_test(spell, lib):
     name = os.path.basename(os.path.dirname(__file__))
 
     # Execute master
-    log("Executing master")
+    log("Executing master:")
     master_spell = [normalized_path(__file__, NANOCAT_BIN),
         "--req",
         "--bind", MASTER_URL,
         "--data", LUA_CODE,
     ]
-    log("spell = " + " ".join(master_spell))
+    log("    spell = " + " ".join(master_spell))
     master_proc = subprocess.Popen(master_spell)
 
     # Execute target spell
-    log("Executing target spell")
-    log("spell = " + spell)
+    log("Executing target spell:")
+    log("    spell = " + spell)
+    log("    cwd = " + str(cwd))
 
 
     env = os.environ
@@ -55,6 +56,7 @@ def run_test(spell, lib):
 
     target_proc = subprocess.Popen(spell,
         env=env,
+        cwd=cwd,
         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     master_proc.wait()
     log("Terminating target spell")

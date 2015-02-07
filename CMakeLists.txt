@@ -284,7 +284,7 @@ macro (add_minion_test_standalone NAME)
       target_link_libraries(${NAME} anl)
     endif ()
     add_test (NAME ${NAME}
-              COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/tests/${NAME} 
+              COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/tests/${NAME}
                 --exe $<TARGET_FILE:${NAME}>
                 --cwd ${CMAKE_CURRENT_SOURCE_DIR}/tests/${NAME}
     )
@@ -308,8 +308,10 @@ macro (add_minion_test_shared NAME)
       target_link_libraries(${NAME} anl)
     endif ()
     add_test (NAME ${NAME}
-              COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/tests/${NAME} 
+              COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/tests/${NAME}
                 --lib $<TARGET_FILE:${NAME}>
+                --cwd ${CMAKE_CURRENT_SOURCE_DIR}/tests/${NAME}
+                --spell "/bin/sleep 10"
     )
 endmacro (add_minion_test_shared)
 

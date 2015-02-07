@@ -32,6 +32,7 @@ void stop_dispatcher(int signal)
 int main(int argc, char const *argv[])
 {
     char absolute_path[PATH_MAX];
+    int r = 1;
 
     /* XXX: Total crap */
     {
@@ -53,13 +54,13 @@ int main(int argc, char const *argv[])
     ctx.file_name =     absolute_path;
     ctx.master_url =    MINION_MASTER_URL;
     ctx.log_prefix =    "minion-standalone";
-    
+
     signal(SIGINT,  stop_dispatcher);
     signal(SIGKILL, stop_dispatcher);
     signal(SIGTERM, stop_dispatcher);
 
-    minion_start(&ctx);
+    r = minion_start(&ctx);
     minion_stop(&ctx);
 
-    return 0;
+    return r;
 }
