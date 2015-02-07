@@ -65,9 +65,9 @@ static void run(void **state)
     ctx.file_name =     boot_script_path;
     ctx.master_url =    (char *) master_url;
 
-    assert_int_not_equal(SIG_ERR, signal(SIGINT,  stop_dispatcher));
-    assert_int_not_equal(SIG_ERR, signal(SIGKILL, stop_dispatcher));
-    assert_int_not_equal(SIG_ERR, signal(SIGTERM, stop_dispatcher));
+    signal(SIGINT,  stop_dispatcher);
+    signal(SIGKILL, stop_dispatcher);
+    signal(SIGTERM, stop_dispatcher);
 
     assert_int_equal(0, minion_start(&ctx));
     minion_stop(&ctx);
