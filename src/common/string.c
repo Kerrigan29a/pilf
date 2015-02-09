@@ -32,7 +32,7 @@
 #ifdef __DGREP__
     #pragma dgrep verbatim "#include <string.h>"
     #pragma dgrep verbatim "#include \"platform.h\""
-#pragma dgrep verbatim "#ifndef PILF_DARWIN"
+    #pragma dgrep verbatim "#ifndef PILF_DARWIN"
 #endif /* __DGREP__ */
 
 /*
@@ -42,7 +42,7 @@
  * Returns strlen(src) + MIN(siz, strlen(initial dst)).
  * If retval >= siz, truncation occurred.
  */
-PILF_PUBLIC size_t strlcat(char *dst, const char *src, size_t siz)
+PILF_INTERNAL size_t strlcat(char *dst, const char *src, size_t siz)
 {
     char *d = dst;
     const char *s = src;
@@ -78,7 +78,7 @@ PILF_PUBLIC size_t strlcat(char *dst, const char *src, size_t siz)
  * copied. Always NUL terminates (unless siz == 0).
  * Returns strlen(src); if retval >= siz, truncation occurred.
  */
-PILF_PUBLIC size_t strlcpy(char *dst, const char *src, size_t siz)
+PILF_INTERNAL size_t strlcpy(char *dst, const char *src, size_t siz)
 {
     char *d = dst;
     const char *s = src;

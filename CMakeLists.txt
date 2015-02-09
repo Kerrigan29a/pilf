@@ -25,13 +25,13 @@ set (MINION_STATIC_CODES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/minion/events.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/minion/link.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/minion/log.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/minion/memory.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/minion/message_workflow.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/minion/minion.c
     )
 
 set (COMMON_STATIC_CODES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/common/string.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/common/memory.c
     )
 
 set (EXTERNAL_COMMON_STATIC_CODES

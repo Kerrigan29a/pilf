@@ -6,13 +6,13 @@
  * Includes
  ***/
 
+#include "minion_config.h"
+
 /* Define log functions to use in ../common/check.h */
 #define LOG_ERROR(...)      error(ctx, __VA_ARGS__)
 #define LOG_CRITICAL(...)   critical(ctx, __VA_ARGS__)
-
-
 #include "../common/common_internals.h"
-#include "minion_config.h"
+
 #include "context.h"
 #include "engine.h"
 #include "engine_events.h"
@@ -20,10 +20,8 @@
 #include "link.h"
 #include "link_events.h"
 #include "log.h"
-#include "memory.h"
 #include "message_workflow.h"
 #include "time_events.h"
-#include "utlist_utils.h"
 
 #ifndef __DGREP__
     #include "public_decl.h"

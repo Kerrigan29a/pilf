@@ -30,7 +30,7 @@ typedef struct _link_event {
         new_msg = NULL; \
         ASSERT_ZERO(msg_len); \
     } else { \
-        new_msg = minion_strndup(ctx, _msg, msg_len); \
+        new_msg = pilf_strndup(_msg, msg_len); \
         CHECK_STR_R(new_msg, __LINE__); \
     } \
     (event)->msg = new_msg; \
@@ -42,7 +42,7 @@ typedef struct _link_event {
     events_finalize_basic_event(ctx, event); \
     (event)->fd = -1; \
     if (IS_STR((event)->msg)) { \
-        minion_secure_free(ctx, (event)->msg, strlen((event)->msg)); \
+        pilf_secure_free((event)->msg, strlen((event)->msg)); \
     } \
 } while(0)
 

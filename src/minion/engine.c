@@ -33,14 +33,14 @@ PILF_PRIVATE int _handle_exec_event(minion_context_t * const ctx,
     /* Check if line starts with '=' like in the lua interpreter */
     if (event->buffer[0] == '=') {
         char * preffix = "return ";
-        char * new_buffer = (char *) minion_secure_malloc(ctx,
+        char * new_buffer = (char *) pilf_secure_malloc(
             (strlen(event->buffer) + strlen(preffix) + 1) * sizeof(char));
         CHECK_NNULL_R(new_buffer, __LINE__);
         strcpy(new_buffer, preffix);
         strcat(new_buffer, event->buffer + 1);
 
         /* Replace the old buffer */
-        minion_secure_free(ctx, event->buffer, strlen(event->buffer));
+        pilf_secure_free(event->buffer, strlen(event->buffer));
         event->buffer = new_buffer;
     }
 #endif
@@ -48,7 +48,7 @@ PILF_PRIVATE int _handle_exec_event(minion_context_t * const ctx,
     debug(ctx, "(%zu) SCRIPT:\n%s", strlen(event->buffer), event->buffer);
 
     result = luaL_dostring(ctx->lua_state, event->buffer);
-     
+
     if (result) {
         const char * msg = lua_tostring(ctx->lua_state, -1);
         EVENTS_NOTIFY_NEW_EVENT(engine, ctx, MINION_ENGINE_DONE_EVENT, msg, strlen(msg));
@@ -63,8 +63,8 @@ PILF_PRIVATE int _handle_exec_event(minion_context_t * const ctx,
         } else {
             EVENTS_NOTIFY_NEW_EVENT(engine, ctx, MINION_ENGINE_DONE_EVENT, "DONE", sizeof("DONE"));
         }
-        
-    }    
+
+    }
     return 0;
 }
 
@@ -91,7 +91,7 @@ PILF_INTERNAL int engine_init(minion_context_t * const ctx)
             error(ctx, "[engine] %s", lua_tostring(ctx->lua_state, -1));
             return result;
         }
-        
+
     }
     if (IS_STR(ctx->script)) {
         int result;

@@ -24,7 +24,7 @@ typedef struct _engine_event {
     ASSERT_STR(buf); \
     ASSERT_TRUE(buf_len); \
     events_init_basic_event(ctx, event, type); \
-    (event)->buffer = minion_strndup(ctx, buf, buf_len); \
+    (event)->buffer = pilf_strndup(buf, buf_len); \
 } while(0)
 
 #define events_finalize_engine_event(ctx, event) do { \
@@ -32,7 +32,7 @@ typedef struct _engine_event {
     ASSERT_BITS_IN(MINION_ENGINE_EVENT, (event)->type); \
     ASSERT_STR((event)->buffer); \
     events_finalize_basic_event(ctx, event); \
-    minion_secure_free(ctx, (event)->buffer, strlen((event)->buffer)); \
+    pilf_secure_free((event)->buffer, strlen((event)->buffer)); \
 } while(0)
 
 

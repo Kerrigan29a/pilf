@@ -7,7 +7,6 @@
 
 #include <uthash/utlist.h>
 
-#include "utlist_utils.h"
 #include "minion_internals.h"
 
 
@@ -64,8 +63,8 @@ PILF_PRIVATE int _handle_outmsg_event(minion_context_t * const ctx,
     CHECK_NNULL_R(socket, __LINE__);
 
     /* Copy the message */
-    DL_NEW_NODE(ctx, message, minion_message_t);
-    message->msg = minion_strdup(ctx, event->msg);
+    DL_NEW_NODE(message, minion_message_t);
+    message->msg = pilf_strdup(event->msg);
     CHECK_STR_R(message->msg, __LINE__);
     DL_APPEND(socket->msg_queue, message);
 
@@ -105,15 +104,15 @@ PILF_PRIVATE int _handle_pollout_event(minion_context_t * const ctx,
         return __LINE__;
     }
 
-    minion_secure_free(ctx, message->msg, strlen(message->msg));
-    minion_secure_free(ctx, message, sizeof(minion_message_t));
+    pilf_secure_free(message->msg, strlen(message->msg));
+    pilf_secure_free(message, sizeof(minion_message_t));
 
     return 0;
 }
 
 PILF_INTERNAL int link_poll(minion_context_t * const ctx)
 {
-    struct nn_pollfd * polls; 
+    struct nn_pollfd * polls;
     int ret;
     int result;
     minion_socket_t * socket;
@@ -128,7 +127,7 @@ PILF_INTERNAL int link_poll(minion_context_t * const ctx)
     /* Allocate enough nn_pollfd's*/
     DL_COUNT(ctx->sockets, socket, sockets_amount);
     mem_amount = sizeof(struct nn_pollfd) * sockets_amount;
-    polls = (struct nn_pollfd *) minion_secure_malloc(ctx, mem_amount);
+    polls = (struct nn_pollfd *) pilf_secure_malloc(mem_amount);
     CHECK_NNULL_R(polls, __LINE__);
 
     i = 0;
@@ -168,7 +167,7 @@ PILF_INTERNAL int link_poll(minion_context_t * const ctx)
     }
 
 clean:
-    minion_secure_free(ctx, polls, mem_amount);
+    pilf_secure_free(polls, mem_amount);
     return result;
 }
 
@@ -182,7 +181,7 @@ PILF_INTERNAL int link_add_socket(minion_context_t * const ctx, int fd, int eid)
     ASSERT_TRUE(fd >= 0);
     ASSERT_TRUE(eid > 0);
 
-    DL_NEW_NODE(ctx, socket, minion_socket_t)
+    DL_NEW_NODE(socket, minion_socket_t)
     socket->fd = fd;
     socket->eid = eid;
     socket->msg_queue = NULL;
@@ -242,7 +241,7 @@ PILF_INTERNAL int link_finalize(minion_context_t * const ctx)
     minion_message_t * tmp_message;
 
     MINION_TRACE_FUNCTION();
-    
+
     ASSERT_NNULL(ctx);
 
     DL_FOREACH_SAFE(ctx->sockets, socket, tmp_socket) {
@@ -252,11 +251,11 @@ PILF_INTERNAL int link_finalize(minion_context_t * const ctx)
         /* Clean message queue */
         DL_FOREACH_SAFE(socket->msg_queue, message, tmp_message) {
             /* Free message */
-            minion_secure_free(ctx, message->msg, strlen(message->msg));
+            pilf_secure_free(message->msg, strlen(message->msg));
             /* Delete from list */
             DL_DELETE(socket->msg_queue, message);
             /* Free node */
-            DL_FINALIZE_NODE(ctx, message, minion_message_t);
+            DL_FINALIZE_NODE(message, minion_message_t);
         }
         ASSERT_NULL(socket->msg_queue);
 
@@ -264,7 +263,7 @@ PILF_INTERNAL int link_finalize(minion_context_t * const ctx)
         DL_DELETE(ctx->sockets, socket);
 
         /* Free node */
-        DL_FINALIZE_NODE(ctx, socket, minion_socket_t);
+        DL_FINALIZE_NODE(socket, minion_socket_t);
     }
     ASSERT_NULL(ctx->sockets);
 

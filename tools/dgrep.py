@@ -24,12 +24,13 @@ __VERSION__ = "2.1"
 
 def debug(*objs):
     pass
-    #print("\x1b[34m(D)\x1b[0m", *objs, file=sys.stderr)
+    # print("\x1b[34m(D)\x1b[0m", *objs, file=sys.stderr)
 
 
 
 class PreprocessorError(Exception):
     pass
+
 
 
 class Preprocessor(object):
@@ -198,7 +199,7 @@ class Parser(object):
         debug("stderr ->\n" + stderr)
 
         for hit in (m.groupdict() for m in self._global_pattern.finditer(stdout)):
-            
+
             if hit["export_key"] is not None and hit["export_line"] is not None:
                 debug("EXPORT AT "+ hit["export_line"])
                 lineno = int(hit["export_line"])
@@ -230,7 +231,7 @@ class Parser(object):
         self._load_file(filename)
         return (part for part in self._parse(filename))
 
-                
+
 
 class Composer(object):
 
@@ -278,7 +279,7 @@ extern "C" {{
 #ifdef __cplusplus
 }
 #endif'''
-        
+
         if self._ofilename:
             self._commonprefix = os.path.commonprefix(ifilenames + [ofilename])
 
@@ -319,7 +320,7 @@ extern "C" {{
 
 
 if __name__ == "__main__":
-    
+
     import argparse
 
     def parse_script_args(default_platform, available_platforms, preprocessor_executable, preprocessor_spell):
@@ -333,7 +334,7 @@ if __name__ == "__main__":
         parser.add_argument('files', type=unicode, metavar='FILE', nargs='+',help='Source code files')
         parser.add_argument('-o', '--output', action='store', type=unicode, metavar='FILE', help='Output file')
         parser.add_argument('-p', '--pattern', action='store', type=unicode,metavar='TXT', default="public", help='Use this pattern (default: %(default)s)')
-        parser.add_argument("-P", "--platform", action="store", type=unicode, metavar='NAME', default=default_platform, choices=available_platforms, help="Select one: %(choices)s (default: %(default)s)") 
+        parser.add_argument("-P", "--platform", action="store", type=unicode, metavar='NAME', default=default_platform, choices=available_platforms, help="Select one: %(choices)s (default: %(default)s)")
         parser.add_argument("-e", "--executable", metavar="BINARY", default=preprocessor_executable, help="Use this executable (default: %(default)s)")
         parser.add_argument("-s", "--spell", metavar="SPELL", action='append', default=preprocessor_spell, help="Use this spell (default: %(default)s)")
         parser.add_argument('-E', '--encoding', action='store', type=unicode, metavar='NAME', default="utf-8", help='Use this encoding  (default: %(default)s)')
@@ -359,7 +360,7 @@ if __name__ == "__main__":
     # Configure composer
     composer = Composer(parser, progname, script_args.pattern,
         script_args.files, script_args.output, include_guard=True)
-    
+
     if script_args.dry:
         print("selected platform -> " + unicode(preprocessor.platform))
         print("selected executable -> " + unicode(preprocessor.executable))

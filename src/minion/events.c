@@ -28,7 +28,7 @@ PILF_PRIVATE minion_listener_t ** _select_list(minion_context_t * const ctx,
     }
     if (IS_BITS_IN(MINION_TIME_EVENT, event_type)) {
         return &ctx->time_listeners;
-    } 
+    }
     CHECK_UNREACHABLE();
 }
 
@@ -114,13 +114,13 @@ PILF_PRIVATE void _delete_event(minion_context_t * const ctx,
 
     if (IS_BITS_IN(MINION_LINK_EVENT, (*event)->type)) {
         events_finalize_link_event(ctx, (minion_link_event_t *) *event);
-        minion_secure_free(ctx, *event, sizeof(minion_link_event_t));
+        pilf_secure_free(*event, sizeof(minion_link_event_t));
     } else if (IS_BITS_IN(MINION_ENGINE_EVENT, (*event)->type)) {
         events_finalize_engine_event(ctx, (minion_engine_event_t *) *event);
-        minion_secure_free(ctx, *event, sizeof(minion_engine_event_t));
+        pilf_secure_free(*event, sizeof(minion_engine_event_t));
     } else if (IS_BITS_IN(MINION_TIME_EVENT, (*event)->type)) {
         events_finalize_time_event(ctx, (minion_time_event_t *) *event);
-        minion_secure_free(ctx, *event, sizeof(minion_time_event_t));
+        pilf_secure_free(*event, sizeof(minion_time_event_t));
     } else {
         CHECK_UNREACHABLE();
     }
@@ -131,7 +131,7 @@ PILF_INTERNAL int events_dispatch(minion_context_t * const ctx)
     minion_time_event_t clock_event;
 
     MINION_TRACE_FUNCTION();
-    
+
     ASSERT_NNULL(ctx);
 
     events_init_time_event(ctx, &clock_event, MINION_TIME_STEP_EVENT);
@@ -189,7 +189,7 @@ PILF_INTERNAL int events_init(minion_context_t * const ctx)
     minion_listener_t *tmp_listener; \
     DL_FOREACH_SAFE((l), listener, tmp_listener) { \
         DL_DELETE((l), listener); \
-        DL_FINALIZE_NODE(ctx, listener, minion_listener_t); \
+        DL_FINALIZE_NODE(listener, minion_listener_t); \
     } \
     ASSERT_NULL(l); \
 } while(0);
@@ -197,7 +197,7 @@ PILF_INTERNAL int events_init(minion_context_t * const ctx)
 PILF_INTERNAL int events_finalize(minion_context_t * const ctx)
 {
     MINION_TRACE_FUNCTION();
-    
+
     ASSERT_NNULL(ctx);
 
     DELETE_LISTENERS_LIST(ctx->link_listeners);

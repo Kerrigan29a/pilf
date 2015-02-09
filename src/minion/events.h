@@ -78,8 +78,7 @@ typedef struct _listener {
 #define EVENTS_BIND_NEW_LISTENER(T, ctx, event_type, handler) do { \
     minion_listener_t *l; \
     ASSERT_NNULL(handler); \
-    l = (minion_listener_t *) minion_secure_malloc(ctx, \
-        sizeof(minion_listener_t)); \
+    l = (minion_listener_t *) pilf_secure_malloc(sizeof(minion_listener_t)); \
     CHECK_NNULL_R(l, __LINE__); \
     events_init_##T##_listener(ctx, l, event_type, handler); \
     events_bind(ctx, l); \
@@ -88,8 +87,7 @@ typedef struct _listener {
 
 #define EVENTS_NOTIFY_NEW_EVENT(T, ctx, type, ...) do { \
     minion_##T##_event_t *e; \
-    e = (minion_##T##_event_t *) minion_secure_malloc(ctx, \
-        sizeof(minion_##T##_event_t)); \
+    e = (minion_##T##_event_t *) pilf_secure_malloc(sizeof(minion_##T##_event_t)); \
     CHECK_NNULL_R(e, __LINE__); \
     events_init_##T##_event(ctx, e, type, __VA_ARGS__); \
     events_notify(ctx, (minion_basic_event_t *) e); \
