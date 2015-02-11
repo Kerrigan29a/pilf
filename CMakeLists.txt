@@ -143,56 +143,68 @@ set(DGREP python ${CMAKE_CURRENT_SOURCE_DIR}/tools/dgrep.py)
 add_custom_command (
   OUTPUT ${MINION_PRIVATE_DECL}
   COMMAND ${DGREP} -p PILF_PRIVATE -o ${MINION_PRIVATE_DECL} -s='-I ${VIRTUAL_ENV}/include' ${MINION_STATIC_CODES}
-  DEPENDS cmockery2
   DEPENDS lua
   DEPENDS nanomsg
   DEPENDS uthash
   )
+if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+    add_dependencies(${MINION_PRIVATE_DECL} cmocker2)
+endif()
 
 add_custom_command (
   OUTPUT ${MINION_INTERNAL_DECL}
   COMMAND ${DGREP} -p PILF_INTERNAL -o ${MINION_INTERNAL_DECL} -s='-I ${VIRTUAL_ENV}/include' ${MINION_STATIC_CODES}
-  DEPENDS cmockery2
   DEPENDS lua
   DEPENDS nanomsg
   DEPENDS uthash
   )
+if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+    add_dependencies(${MINION_INTERNAL_DECL} cmocker2)
+endif()
 
 add_custom_command (
   OUTPUT ${MINION_PUBLIC_DECL}
   COMMAND ${DGREP} -p PILF_PUBLIC -o ${MINION_PUBLIC_DECL} -s='-I ${VIRTUAL_ENV}/include' ${MINION_STATIC_CODES}
-  DEPENDS cmockery2
   DEPENDS lua
   DEPENDS nanomsg
   DEPENDS uthash
   )
+if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+    add_dependencies(${MINION_PUBLIC_DECL} cmocker2)
+endif()
 
 add_custom_command (
   OUTPUT ${COMMON_PRIVATE_DECL}
   COMMAND ${DGREP} -p PILF_PRIVATE -o ${COMMON_PRIVATE_DECL} -s='-I ${VIRTUAL_ENV}/include' ${COMMON_STATIC_CODES}
-  DEPENDS cmockery2
   DEPENDS lua
   DEPENDS nanomsg
   DEPENDS uthash
   )
+if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+    add_dependencies(${COMMON_PRIVATE_DECL} cmocker2)
+endif()
 
 add_custom_command (
   OUTPUT ${COMMON_INTERNAL_DECL}
   COMMAND ${DGREP} -p PILF_INTERNAL -o ${COMMON_INTERNAL_DECL} -s='-I ${VIRTUAL_ENV}/include' ${COMMON_STATIC_CODES}
-  DEPENDS cmockery2
   DEPENDS lua
   DEPENDS nanomsg
   DEPENDS uthash
   )
+if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+    add_dependencies(${COMMON_INTERNAL_DECL} cmocker2)
+endif()
 
 add_custom_command (
   OUTPUT ${COMMON_PUBLIC_DECL}
   COMMAND ${DGREP} -p PILF_PUBLIC -o ${COMMON_PUBLIC_DECL} -s='-I ${VIRTUAL_ENV}/include' ${COMMON_STATIC_CODES}
-  DEPENDS cmockery2
   DEPENDS lua
   DEPENDS nanomsg
   DEPENDS uthash
   )
+if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+    add_dependencies(${COMMON_PUBLIC_DECL} cmocker2)
+endif()
 
 
 
