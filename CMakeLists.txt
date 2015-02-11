@@ -67,20 +67,19 @@ set(VIRTUAL_ENV ${CMAKE_CURRENT_SOURCE_DIR}/venv)
 # Build deps
 ###
 
-set(CMOCKERY2_CONFIGURE_OPTIONS --prefix=${VIRTUAL_ENV})
-set(CMOCKERY2_CONFIGURE_OPTIONS ${CMOCKERY2_CONFIGURE_OPTIONS} --with-pic)
-#if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
-#    set(CMOCKERY2_CONFIGURE_OPTIONS ${CMOCKERY2_CONFIGURE_OPTIONS} --enable-gcov)
-#endif ()
+if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+    set(CMOCKERY2_CONFIGURE_OPTIONS --prefix=${VIRTUAL_ENV})
+    set(CMOCKERY2_CONFIGURE_OPTIONS ${CMOCKERY2_CONFIGURE_OPTIONS} --with-pic)
 
-ExternalProject_Add( cmockery2
-  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/cmockery2
-  CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deps/cmockery2/autogen.sh && ${CMAKE_CURRENT_SOURCE_DIR}/deps/cmockery2/configure ${CMOCKERY2_CONFIGURE_OPTIONS}
-  PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/deps/cmockery2
-  BUILD_COMMAND make
-  BUILD_IN_SOURCE 1
-  INSTALL_COMMAND make install
-)
+    ExternalProject_Add( cmockery2
+      SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/cmockery2
+      CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deps/cmockery2/autogen.sh && ${CMAKE_CURRENT_SOURCE_DIR}/deps/cmockery2/configure ${CMOCKERY2_CONFIGURE_OPTIONS}
+      PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/deps/cmockery2
+      BUILD_COMMAND make
+      BUILD_IN_SOURCE 1
+      INSTALL_COMMAND make install
+    )
+endif()
 
 
 
@@ -95,9 +94,6 @@ else ()
   set(LUA_MAKE_OPTIONS ${LUA_MAKE_OPTIONS} MYLDFLAGS=-Wl,-E)
   set(LUA_MAKE_OPTIONS ${LUA_MAKE_OPTIONS} MYLIBS=-ldl)
 endif ()
-# if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
-#     set(LUA_MAKE_OPTIONS ${LUA_MAKE_OPTIONS} MYCFLAGS+=-g)
-# endif ()
 
 ExternalProject_Add( lua
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/lua
@@ -116,9 +112,6 @@ set(NANOMSG_CONFIGURE_OPTIONS ${NANOMSG_CONFIGURE_OPTIONS} --with-pic)
 #set(NANOMSG_CONFIGURE_OPTIONS ${NANOMSG_CONFIGURE_OPTIONS} --disable-shared)
 #set(NANOMSG_CONFIGURE_OPTIONS ${NANOMSG_CONFIGURE_OPTIONS} --disable-symlinks)
 #set(NANOMSG_CONFIGURE_OPTIONS ${NANOMSG_CONFIGURE_OPTIONS} --disable-nanocat)
-# if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
-#     set(NANOMSG_CONFIGURE_OPTIONS ${NANOMSG_CONFIGURE_OPTIONS} --enable-debug)
-# endif ()
 
 ExternalProject_Add( nanomsg
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/nanomsg
@@ -217,20 +210,29 @@ if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
     add_definitions(-DDEBUG -DUNIT_TESTING)
 elseif(${CMAKE_BUILD_TYPE} MATCHES "Release")
     add_definitions(-DNDEBUG)
+    add_compile_options(-O2)
 endif()
+
 
 
 add_library(minion_obj OBJECT ${MINION_STATIC_SOURCES})
 set_property(TARGET minion_obj PROPERTY POSITION_INDEPENDENT_CODE ON)
 
+
+
 add_library (minion_shared SHARED ${MINION_SHARED_SOURCES} $<TARGET_OBJECTS:minion_obj>)
 set_target_properties(minion_shared PROPERTIES OUTPUT_NAME minion)
 set_property(TARGET minion_shared PROPERTY INTERFACE_POSITION_INDEPENDENT_CODE ON)
 target_link_libraries(minion_shared
-  ${VIRTUAL_ENV}/lib/libcmockery.a
-  ${VIRTUAL_ENV}/lib/liblua.a
   ${VIRTUAL_ENV}/lib/libnanomsg.a
-  )
+  ${VIRTUAL_ENV}/lib/liblua.a
+)
+if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+    target_link_libraries(minion_shared
+      ${VIRTUAL_ENV}/lib/libcmockery.a
+    )
+endif()
+
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   target_link_libraries(minion_shared m)
   target_link_libraries(minion_shared dl)
@@ -238,19 +240,26 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   target_link_libraries(minion_shared anl)
 endif ()
 
+
+
 add_executable(minion_standalone ${MINION_EXE_SOURCES} $<TARGET_OBJECTS:minion_obj>)
 set_target_properties(minion_standalone PROPERTIES OUTPUT_NAME minion)
 target_link_libraries(minion_standalone
-  ${VIRTUAL_ENV}/lib/libcmockery.a
-  ${VIRTUAL_ENV}/lib/liblua.a
   ${VIRTUAL_ENV}/lib/libnanomsg.a
-  )
+  ${VIRTUAL_ENV}/lib/liblua.a
+)
+if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+    target_link_libraries(minion_standalone
+      ${VIRTUAL_ENV}/lib/libcmockery.a
+    )
+endif()
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   target_link_libraries(minion_standalone m)
   target_link_libraries(minion_standalone dl)
   target_link_libraries(minion_standalone pthread)
   target_link_libraries(minion_standalone anl)
 endif ()
+
 
 
 install (TARGETS minion_standalone RUNTIME DESTINATION ${VIRTUAL_ENV}/bin)
@@ -260,62 +269,70 @@ install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/minion/boot.lua DESTINATION ${VIR
 
 
 ################################################################################
-# Build minion
+# Tests
 ###
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/minion)
-set (all_tests "")
+if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
 
 
 
-macro (add_minion_test_standalone NAME)
-    list (APPEND all_tests ${NAME})
-    add_executable (${NAME} tests/${NAME}/test_standalone.c $<TARGET_OBJECTS:minion_obj>)
-    target_link_libraries (${NAME}
-      ${VIRTUAL_ENV}/lib/libcmockery.a
-      ${VIRTUAL_ENV}/lib/libcmockery.a
-      ${VIRTUAL_ENV}/lib/liblua.a
-      ${VIRTUAL_ENV}/lib/libnanomsg.a
-      )
-    if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-      target_link_libraries(${NAME} m)
-      target_link_libraries(${NAME} dl)
-      target_link_libraries(${NAME} pthread)
-      target_link_libraries(${NAME} anl)
-    endif ()
-    add_test (NAME ${NAME}
-              COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/tests/${NAME}
-                --exe $<TARGET_FILE:${NAME}>
-                --cwd ${CMAKE_CURRENT_SOURCE_DIR}/tests/${NAME}
-    )
-endmacro (add_minion_test_standalone)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/minion)
+    set (all_tests "")
 
 
 
-macro (add_minion_test_shared NAME)
-    list (APPEND all_tests ${NAME})
-    add_library (${NAME} SHARED tests/${NAME}/test_shared.c $<TARGET_OBJECTS:minion_obj>)
-    target_link_libraries (${NAME}
-      ${VIRTUAL_ENV}/lib/libcmockery.a
-      ${VIRTUAL_ENV}/lib/libcmockery.a
-      ${VIRTUAL_ENV}/lib/liblua.a
-      ${VIRTUAL_ENV}/lib/libnanomsg.a
-      )
-    if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-      target_link_libraries(${NAME} m)
-      target_link_libraries(${NAME} dl)
-      target_link_libraries(${NAME} pthread)
-      target_link_libraries(${NAME} anl)
-    endif ()
-    add_test (NAME ${NAME}
-              COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/tests/${NAME}
-                --lib $<TARGET_FILE:${NAME}>
-                --cwd ${CMAKE_CURRENT_SOURCE_DIR}/tests/${NAME}
-                --spell "/bin/sleep 10"
-    )
-endmacro (add_minion_test_shared)
+    macro (add_minion_test_standalone NAME)
+        list (APPEND all_tests ${NAME})
+        add_executable (${NAME} tests/${NAME}/test_standalone.c $<TARGET_OBJECTS:minion_obj>)
+        target_link_libraries (${NAME}
+          ${VIRTUAL_ENV}/lib/libcmockery.a
+          ${VIRTUAL_ENV}/lib/libcmockery.a
+          ${VIRTUAL_ENV}/lib/liblua.a
+          ${VIRTUAL_ENV}/lib/libnanomsg.a
+          )
+        if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+          target_link_libraries(${NAME} m)
+          target_link_libraries(${NAME} dl)
+          target_link_libraries(${NAME} pthread)
+          target_link_libraries(${NAME} anl)
+        endif ()
+        add_test (NAME ${NAME}
+                  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/tests/${NAME}
+                    --exe $<TARGET_FILE:${NAME}>
+                    --cwd ${CMAKE_CURRENT_SOURCE_DIR}/tests/${NAME}
+        )
+    endmacro (add_minion_test_standalone)
 
 
-#  Transport tests.
-add_minion_test_standalone(standalone_tcp_basic)
-add_minion_test_shared(shared_tcp_basic)
+
+    macro (add_minion_test_shared NAME)
+        list (APPEND all_tests ${NAME})
+        add_library (${NAME} SHARED tests/${NAME}/test_shared.c $<TARGET_OBJECTS:minion_obj>)
+        target_link_libraries (${NAME}
+          ${VIRTUAL_ENV}/lib/libcmockery.a
+          ${VIRTUAL_ENV}/lib/libcmockery.a
+          ${VIRTUAL_ENV}/lib/liblua.a
+          ${VIRTUAL_ENV}/lib/libnanomsg.a
+          )
+        if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+          target_link_libraries(${NAME} m)
+          target_link_libraries(${NAME} dl)
+          target_link_libraries(${NAME} pthread)
+          target_link_libraries(${NAME} anl)
+        endif ()
+        add_test (NAME ${NAME}
+                  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/tests/${NAME}
+                    --lib $<TARGET_FILE:${NAME}>
+                    --cwd ${CMAKE_CURRENT_SOURCE_DIR}/tests/${NAME}
+                    --spell "/bin/sleep 10"
+        )
+    endmacro (add_minion_test_shared)
+
+
+    #  Transport tests.
+    add_minion_test_standalone(standalone_tcp_basic)
+    add_minion_test_shared(shared_tcp_basic)
+
+
+
+endif ()
